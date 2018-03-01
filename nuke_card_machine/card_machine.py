@@ -1,4 +1,5 @@
-import nuke  # pylint: disable=import-error
+"""Interface class to provide ability for cards creation."""
+
 
 try:
     # < Nuke 11
@@ -9,31 +10,45 @@ except ImportError:
     import PySide2.QtCore as QtCore
     import PySide2.QtWidgets as QtGuiWidgets
 
+from nuke_card_machine.constants import AXIS, CARD, CARD3D, RAW, MAX, MAYA
 import nuke_card_machine.utils as utils
 
 reload(utils)
 
 
-UBER_PICK = None
+class Button(QtGuiWidgets.QPushButton):
+    """Custom Button to change color when mouse is enter and leave widget."""
 
-
-class CustomButton(QtGuiWidgets.QPushButton):
     def __init__(self, name, parent=None):
-        super(CustomButton, self).__init__(parent)
+        super(Button, self).__init__(parent)
         self.setMouseTracking(True)
         self.setText(name)
         self.setMinimumWidth(100)
         self.setMaximumWidth(100)
         self.setStyleSheet("background-color:#282828")
 
-    def enterEvent(self, event):
+    def enterEvent(self, event):  # pylint: disable=invalid-name,unused-argument
+        """Change stylesheet to ornage style when mouse enters widget.
+
+        Args:
+            event: unused but necessary.
+
+        """
         self.setStyleSheet("background-color:#C26828")
 
-    def leaveEvent(self, event):
+    def leaveEvent(self, event):  # pylint: disable=invalid-name,unused-argument
+        """Change stylesheet back to basic when mouse leaves widget.
+
+        Args:
+            event: unused but necessary.
+
+        """
         self.setStyleSheet("background-color:#282828")
 
 
 class DropDown(QtGuiWidgets.QWidget):
+    """Pair of label and dropdown widget."""
+
     def __init__(self, label, content=None, scale=None):
         super(DropDown, self).__init__()
 
@@ -57,9 +72,11 @@ class DropDown(QtGuiWidgets.QWidget):
             layout.addWidget(self.scale_input)
 
 
-class UberPick(QtGuiWidgets.QWidget):
+class CardMachine(QtGuiWidgets.QWidget):
+    """Interface class to interact with user."""
+
     def __init__(self, node):
-        super(UberPick, self).__init__()
+        super(CardMachine, self).__init__()
 
         self.node = node
 
@@ -70,12 +87,12 @@ class UberPick(QtGuiWidgets.QWidget):
         layer, node = utils.get_layer()
 
         self.channel_drop = DropDown('Position Pass', layer)
-        self.geometry_drop = DropDown('Geometry', ['Axis', 'Card', 'Card3D'])
-        self.engine_drop = DropDown('Render Engine', ['RAW', 'Max/VRay', 'Maya/Vray'])
+        self.geometry_drop = DropDown('Geometry', [AXIS, CARD, CARD3D])
+        self.engine_drop = DropDown('Render Engine', [RAW, MAX, MAYA])
         self.scale = DropDown('Uniform Scale', content=None, scale=True)
 
-        cancel_button = CustomButton('Cancel')
-        ok_button = CustomButton('do the magic')
+        cancel_button = Button('Cancel')
+        ok_button = Button('Create Geometry')
 
         button_layout = QtGuiWidgets.QHBoxLayout()
         button_layout.setAlignment(QtCore.Qt.AlignRight)
@@ -94,25 +111,29 @@ class UberPick(QtGuiWidgets.QWidget):
         ok_button.clicked.connect(self.create_geometry)
 
     def create_geometry(self):
-        channel = self.channel_drop.pulldown.currentText()
-        geometry = self.geometry_drop.pulldown.currentText()
-        renderer = self.engine_drop.pulldown.currentText()
-        scale = self.scale.scale_input.text()
-        utils.import_data(self.node, channel, geometry, scale, renderer)
+        """Build Nuke geometry based on user selection."""
+        utils.import_data(self.node,
+                          self.channel_drop.pulldown.currentText(),
+                          self.geometry_drop.pulldown.currentText(),
+                          self.engine_drop.pulldown.currentText(),
+                          self.scale.scale_input.text())
         self.cancel()
 
     def cancel(self):
+        """Close widget."""
         self.close()
 
-    # noinspection PyPep8Naming
-    def keyPressEvent(self, e):
-        if e.key() == QtCore.Qt.Key_Escape:
+    def keyPressEvent(self, event):  # pylint: disable=invalid-name
+        """Catch user key interactions. Close on escape."""
+        if event.key() == QtCore.Qt.Key_Escape:
             self.cancel()
 
 
 def start():
+    """Start up function to show widget."""
     rotopaint = utils.check_nodetype()
     if rotopaint:
-        global dialog
-        dialog = UberPick(rotopaint)
-        dialog.show()
+        card_machine = None
+        global card_machine  # pylint: disable=global-statement
+        card_machine = CardMachine(rotopaint)
+        card_machine.show()
