@@ -1,11 +1,14 @@
-RAW = 'RAW'
+# Import third-party modules
+import nuke
 
-MAX = 'Max/VRay'
+ENGINES = ['Houdini', 'Nuke', 'Max', 'Maya']
 
-MAYA = 'Maya/Vray'
+GEOMETRY = {'Axis': nuke.nodes.Axis2,
+            'Card': nuke.nodes.Card,
+            'Card3D': nuke.nodes.Card3D}
 
-AXIS = 'Axis'
-
-CARD = 'Card'
-
-CARD3D = 'Card3D'
+CHANNEL_MAP = {'Houdini': {'red': 'x', 'green': 'x', 'blue': 'z'},
+               'Nuke': {'red': 'red', 'green': 'green', 'blue': 'z'},
+               'Max': {'red': 'red', 'green': 'green', 'blue': 'z'},
+               'Maya': {'red': 'red', 'green': 'green', 'blue': 'z'}
+               }
