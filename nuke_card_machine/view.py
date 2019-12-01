@@ -7,7 +7,7 @@ import os
 from PySide2 import QtWidgets, QtCore, QtGui
 
 # Import local modules
-from nuke_card_machine.constants import GEOMETRY, ENGINES
+from nuke_card_machine.constants import GEOMETRY
 
 
 class Button(QtWidgets.QPushButton):
@@ -84,8 +84,7 @@ class CardMachine(QtWidgets.QWidget):
 
     def build_widgets(self):
         self.channel_drop = DropDown('Position Pass', self.layer)
-        self.geometry_drop = DropDown('Geometry', ENGINES)
-        self.engine_drop = DropDown('Render Engine', sorted(GEOMETRY.keys()))
+        self.geometry_drop = DropDown('Geometry', sorted(GEOMETRY.keys()))
         self.scale = DropDown('Uniform Scale', content=None, scale=True)
 
         self.cancel_button = Button('Cancel')
@@ -100,7 +99,6 @@ class CardMachine(QtWidgets.QWidget):
 
         main_layout.addWidget(self.channel_drop)
         main_layout.addWidget(self.geometry_drop)
-        main_layout.addWidget(self.engine_drop)
         main_layout.addWidget(self.scale)
         main_layout.addLayout(button_layout)
 
@@ -121,7 +119,6 @@ class CardMachine(QtWidgets.QWidget):
         self.create.emit((self.node,
                          self.channel_drop.pulldown.currentText(),
                          self.geometry_drop.pulldown.currentText(),
-                         self.engine_drop.pulldown.currentText(),
                          float(self.scale.scale_input.text())))
         self.close()
 
