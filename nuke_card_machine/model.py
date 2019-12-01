@@ -3,9 +3,6 @@
 # Import third-party modules
 import nuke  # pylint: disable=import-error
 
-# Import local modules
-from nuke_card_machine.constants import ENGINES, CHANNEL_MAP
-
 
 def get_layer(node):
     """Get available layer at selected node.
@@ -59,7 +56,7 @@ def get_stroke_details(rotonode):
     return details
 
 
-def sample_values(rotonode, pick, layer, render_engine):
+def sample_values(rotonode, pick, layer):
     """Measure values from given point.
 
     Args:
@@ -67,7 +64,6 @@ def sample_values(rotonode, pick, layer, render_engine):
         pick (tuple): Frame of stroke creation as well as  and y position of
             stroke in screenspace.
         layer (str): Layer holding hte position data to measure.
-        render_engine (str): Engine from which data has been rendered.
 
     Returns:
         Tuple (float, float, float): X, Y and Z Position.
@@ -75,20 +71,19 @@ def sample_values(rotonode, pick, layer, render_engine):
     """
     frame, xpos, ypos = pick
     coordinates = []
-    for channel in ('red', 'green', 'blue'):
-        coordinates.append(
-            sample_point(rotonode, layer, channel, render_engine, xpos, ypos))
+    channels = [sub for sub in rotonode.channels() if layer in sub.split('.')[0]][:3]
+
+    for channel in channels:
+        coordinates.append(sample_point(rotonode, channel, xpos, ypos))
     return coordinates
 
 
-def sample_point(node, layer, channel, render_engine, xpos, ypos):
+def sample_point(node, channel, xpos, ypos):
     """Measure value from sub-channel on given point and layer.
 
     Args:
         node (nuke.Node): Node to check values on.
-        layer (str): Layer holding hte position data to measure. :
         channel (str): Subchannel like red, green or blue.
-        render_engine (str): Engine from which data has been rendered.
         xpos (int): Horizontal screenspace position to measure.
         ypos (int): Vertical screenspace position to measure.
 
@@ -96,16 +91,15 @@ def sample_point(node, layer, channel, render_engine, xpos, ypos):
         Float: Measured Position in Sub channel.
 
     """
-    return float(node.sample(r'{}.{}'.format(layer, CHANNEL_MAP[render_engine][channel]), xpos, ypos))
+    return float(node.sample(channel, xpos, ypos))
 
 
-def import_data(node, layer, render_engine, node_type, uniform_scale):  # pylint: disable=too-many-locals
+def import_data(node, layer, node_type, uniform_scale):  # pylint: disable=too-many-locals
     """Build nuke geometry.
 
     Args:
         node (nuke.node): Nuke Rotopaint node.
         layer (str): Name of layer holding position information.
-        render_engine (str): From which engine the data were created.
         node_type (str): Type of nuke geometry to create.
         uniform_scale: Overall scale to created Nodes.
 
@@ -113,32 +107,25 @@ def import_data(node, layer, render_engine, node_type, uniform_scale):  # pylint
     coordinates = get_stroke_details(node)
     temp_xpos = node.xpos()
 
-    values = []
     for pick in coordinates:
 
-        xpos, ypos, zpos = sample_values(node, pick, layer, render_engine)
-
-        if render_engine in ENGINES[0:1]:
-            values = [xpos, ypos, zpos]
-        elif render_engine == ENGINES[2]:
-            values = [xpos, zpos, -ypos]
-        elif render_engine == ENGINES[3]:
-            values = [xpos, ypos, -zpos]
+        nuke.tprint(pick)
+        position = sample_values(node, pick, layer)
 
         temp_xpos += 150
         temp_ypos = node.ypos() + 100
 
-        geoemtry = nuke.createNode(node_type)
-        geoemtry.setXYpos(temp_xpos, temp_ypos + 50)
-        geoemtry.setInput(0, None)
+        geometry = nuke.createNode(node_type)
+        geometry.setXYpos(temp_xpos, temp_ypos + 50)
+        geometry.setInput(0, None)
 
         if node_type == 'Card':
-            card = geoemtry
-            geoemtry = nuke.nodes.TransformGeo(xpos=temp_xpos, ypos=temp_ypos + 100)
-            geoemtry.setInput(0, card)
+            card = geometry
+            geometry = nuke.nodes.TransformGeo(xpos=temp_xpos, ypos=temp_ypos + 100)
+            geometry.setInput(0, card)
 
-        geoemtry['translate'].setValue(values)
-        geoemtry['uniform_scale'].setValue(float(uniform_scale))
+        geometry['translate'].setValue(position)
+        geometry['uniform_scale'].setValue(float(uniform_scale))
 
 
 def check_nodetype():
