@@ -61,24 +61,6 @@ def get_stroke_details(rotonode):
     return ordered_details
 
 
-def sample_values(curve_tool, pick):
-    """Measure values from given point.
-
-    Args:
-        curve_tool (nuke.Node): Node to measure values.
-        pick (tuple): Frame of stroke creation as well as  and y position of
-            stroke in screenspace.
-
-    Returns:
-        Tuple (float, float, float): X, Y and Z Position.
-
-    """
-    frame, xpos, ypos = pick
-    curve_tool['roi'].setValue(xpos, ypos, xpos+1, ypos+1)
-    nuke.execute(curve_tool, frame, frame)
-    return curve_tool['intensityData'].value()
-
-
 def build_curve_tool(paint_node, channel):
     """Measure value from sub-channel on given point and layer.
 
@@ -95,42 +77,69 @@ def build_curve_tool(paint_node, channel):
     return curve_tool
 
 
-def import_data(node, layer, node_type, uniform_scale):  # pylint: disable=too-many-locals
+def sample_values(curve_tool, pick, frame):
+    """Measure values from given point.
+
+    Args:
+        curve_tool (nuke.Node): Node to measure values.
+        pick (tuple): Frame of stroke creation as well as  and y position of
+            stroke in screenspace.
+
+    Returns:
+        Tuple (float, float, float): X, Y and Z Position.
+
+    """
+    xpos, ypos = pick
+    print "xpos ypos"
+    print xpos
+    print ypos
+    curve_tool['ROI'].setValue([xpos, ypos, xpos+1, ypos+1])
+    nuke.execute(curve_tool, frame, frame)
+    return curve_tool['intensitydata'].value()
+
+
+def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable=too-many-locals
     """Build nuke geometry.
 
     Args:
-        node (nuke.node): Nuke Rotopaint node.
+        roto_paint (nuke.node): Nuke Rotopaint node.
         layer (str): Name of layer holding position information.
         node_type (str): Type of nuke geometry to create.
         uniform_scale: Overall scale to created Nodes.
 
     """
-    frames = get_stroke_details(node)
-    temp_xpos = node.xpos()
+    frames = get_stroke_details(roto_paint)
+    roto_paint['disable'].setValue(True)
+    temp_xpos = roto_paint.xpos()
 
-    curve_tool = build_curve_tool(node, layer)
+    curve_tool = build_curve_tool(roto_paint, layer)
 
-    for stroke in frames:
+    for frame in frames:
 
+        for stroke in frames[frame]:
 
-        position = sample_values(curve_tool, stroke)
-        print "position"
-        print position
+            position = sample_values(curve_tool, stroke, frame)
+            print "sampled position"
+            print position
 
-        temp_xpos += 150
-        temp_ypos = node.ypos() + 100
+            temp_xpos += 150
+            temp_ypos = roto_paint.ypos() + 100
 
-        geometry = nuke.createNode(node_type)
-        geometry.setXYpos(temp_xpos, temp_ypos + 50)
-        geometry.setInput(0, None)
+            geometry = nuke.createNode(node_type)
+            geometry.setXYpos(temp_xpos, temp_ypos + 50)
+            geometry.setInput(0, None)
 
-        if node_type == 'Card':
-            card = geometry
-            geometry = nuke.nodes.TransformGeo(xpos=temp_xpos, ypos=temp_ypos + 100)
-            geometry.setInput(0, card)
+            if node_type == 'Card':
+                card = geometry
+                geometry = nuke.nodes.TransformGeo(xpos=temp_xpos, ypos=temp_ypos + 100)
+                geometry.setInput(0, card)
 
-        geometry['translate'].setValue(position)
-        geometry['uniform_scale'].setValue(float(uniform_scale))
+            geometry['translate'].setValue(position[:3])
+            geometry['uniform_scale'].setValue(float(uniform_scale))
+
+    nuke.delete(curve_tool)
+    roto_paint['disable'].setValue(False)
+
 
 
 def check_nodetype():
