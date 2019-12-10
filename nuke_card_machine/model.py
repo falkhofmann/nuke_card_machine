@@ -56,11 +56,11 @@ def get_stroke_details(rotonode):
     return details
 
 
-def sample_values(rotonode, pick, layer):
+def sample_values(curve_tool, pick, layer):
     """Measure values from given point.
 
     Args:
-        rotonode (nuke.Node): Node to check values on.
+        curve_tool (nuke.Node): Node to measure values.
         pick (tuple): Frame of stroke creation as well as  and y position of
             stroke in screenspace.
         layer (str): Layer holding hte position data to measure.
@@ -70,28 +70,21 @@ def sample_values(rotonode, pick, layer):
 
     """
     frame, xpos, ypos = pick
-    coordinates = []
-    channels = [sub for sub in rotonode.channels() if layer in sub.split('.')[0]][:3]
-
-    for channel in channels:
-        coordinates.append(sample_point(rotonode, channel, xpos, ypos))
-    return coordinates
 
 
-def sample_point(node, channel, xpos, ypos):
+def build_curve_tool(paint_node, channel):
     """Measure value from sub-channel on given point and layer.
 
     Args:
-        node (nuke.Node): Node to check values on.
+        paint_node (nuke.Node): Node to check values on.
         channel (str): Subchannel like red, green or blue.
-        xpos (int): Horizontal screenspace position to measure.
-        ypos (int): Vertical screenspace position to measure.
-
-    Returns:
-        Float: Measured Position in Sub channel.
 
     """
-    return float(node.sample(channel, xpos, ypos))
+    curve_tool = nuke.nodes.CurveTool(xpos=paint_node.xpos(),
+                                      ypos=paint_node.ypos() + 100,
+                                      channels=channel)
+    curve_tool.setInput(0, paint_node)
+    return curve_tool
 
 
 def import_data(node, layer, node_type, uniform_scale):  # pylint: disable=too-many-locals
@@ -106,6 +99,8 @@ def import_data(node, layer, node_type, uniform_scale):  # pylint: disable=too-m
     """
     coordinates = get_stroke_details(node)
     temp_xpos = node.xpos()
+
+    curve_tool = build_curve_tool(node, layer)
 
     for pick in coordinates:
 
