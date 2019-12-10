@@ -1,3 +1,5 @@
+"""Define constant values to map user selection to node types."""
+
 # Import third-party modules
 import nuke
 
