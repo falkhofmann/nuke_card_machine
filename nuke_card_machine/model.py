@@ -1,8 +1,9 @@
 """"Provide utility functions to measure values and build nodes."""
 
-# Import third-party modules
+# import built-in modules
 from collections import defaultdict
 
+# Import third-party modules
 import nuke  # pylint: disable=import-error
 
 
@@ -19,13 +20,13 @@ def get_layer(node):
 
 
 def get_strokes(curve_layer):
-    """Get all Strokes inside Rotopaint curve knob.
+    """Get all Strokes inside RotoPaint curve knob.
 
     Args:
         curve_layer (list): Available layer on Node.
 
     Returns:
-        List: Rotopaint Strokes.
+        List: RotoPaint Strokes.
 
     """
     strokes = []
@@ -37,17 +38,17 @@ def get_strokes(curve_layer):
     return strokes
 
 
-def get_stroke_details(rotonode):
+def get_stroke_details(rotopaint_node):
     """Get Screen position and frame of strokes.
 
     Args:
-        rotonode (nuke.node): Rotopaint node to extract details from.
+        rotopaint_node (nuke.node): Rotopaint node to extract details from.
 
     Returns:
         List: Tuples (int, float, float)
 
     """
-    strokes = get_strokes(rotonode.knob('curves').rootLayer)
+    strokes = get_strokes(rotopaint_node.knob('curves').rootLayer)
     ordered_details = defaultdict(list)
     for stroke in strokes:
         attributes = stroke.getAttributes()
@@ -63,7 +64,7 @@ def build_curve_tool(paint_node, channel):
 
     Args:
         paint_node (nuke.Node): Node to check values on.
-        channel (str): Subchannel like red, green or blue.
+        channel (str): Channel to measure values from.
 
     """
     curve_tool = nuke.nodes.CurveTool(xpos=paint_node.xpos(),
@@ -81,7 +82,7 @@ def sample_values(curve_tool, stroke, frame):
         frame (int): Frame on which color sampling is going to happen.
         curve_tool (nuke.Node): Node to measure values.
         stroke (tuple): Frame of stroke creation as well as  and y position of
-            stroke in screenspace.
+            stroke in screen_space.
 
     Returns:
         Tuple (float, float, float): X, Y and Z Position.
@@ -146,6 +147,7 @@ def check_nodetype():
         return node
     else:
         error_message()
+        return
 
 
 def error_message():

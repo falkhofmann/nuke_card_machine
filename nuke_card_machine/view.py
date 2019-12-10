@@ -4,7 +4,7 @@
 import os
 
 # Import third-party modules
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore
 
 # Import local modules
 from nuke_card_machine.constants import GEOMETRY
@@ -23,7 +23,7 @@ class Button(QtWidgets.QPushButton):
 
     @staticmethod
     def set_style_sheet(widget):
-
+        """Set Stylesheet to the user interface."""
         styles_file = os.path.normpath(os.path.join(os.path.dirname(__file__),
                                                     "stylesheet.css"))
 
@@ -47,23 +47,17 @@ class DropDown(QtWidgets.QWidget):
         layout.addWidget(label)
 
         if not scale:
-            self.pulldown = QtWidgets.QComboBox()
-            print content
+            self.pull_down = QtWidgets.QComboBox()
             for item in content:
-                self.pulldown.addItem(QtGui.QIcon(self.get_icon_path(item)), item)
-            layout.addWidget(self.pulldown)
+                self.pull_down.addItem(item)
+
+            layout.addWidget(self.pull_down)
 
         else:
             self.scale_input = QtWidgets.QLineEdit()
             self.scale_input.setMinimumWidth(50)
             self.scale_input.setText('1')
             layout.addWidget(self.scale_input)
-
-    @staticmethod
-    def get_icon_path(item):
-        return os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                             "icons",
-                                             "{}.png".format(item)))
 
 
 class CardMachine(QtWidgets.QWidget):
@@ -76,6 +70,7 @@ class CardMachine(QtWidgets.QWidget):
 
         self.node = node
         self.layer = layer
+        print self.layer
 
         self.build_widgets()
         self.build_layouts()
@@ -117,9 +112,9 @@ class CardMachine(QtWidgets.QWidget):
         """Build Nuke geometry based on user selection."""
 
         self.create.emit((self.node,
-                         self.channel_drop.pulldown.currentText(),
-                         self.geometry_drop.pulldown.currentText(),
-                         float(self.scale.scale_input.text())))
+                          self.channel_drop.pull_down.currentText(),
+                          self.geometry_drop.pull_down.currentText(),
+                          float(self.scale.scale_input.text())))
         self.close()
 
     def keyPressEvent(self, event):  # pylint: disable=invalid-name
