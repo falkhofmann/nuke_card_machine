@@ -1,6 +1,8 @@
 """"Provide utility functions to measure values and build nodes."""
 
 # Import third-party modules
+from collections import defaultdict
+
 import nuke  # pylint: disable=import-error
 
 
@@ -45,31 +47,36 @@ def get_stroke_details(rotonode):
         List: Tuples (int, float, float)
 
     """
+
     strokes = get_strokes(rotonode.knob('curves').rootLayer)
     details = []
+    ordered_details = defaultdict(list)
     for stroke in strokes:
         attributes = stroke.getAttributes()
         start_frame = int(attributes.getValue(0, 'ltn'))
         xpos = stroke.getTransform().getPivotPointAnimCurve(0).constantValue
         ypos = stroke.getTransform().getPivotPointAnimCurve(1).constantValue
-        details.append((start_frame, xpos, ypos))
-    return details
+        # details.append((start_frame, xpos, ypos))
+        ordered_details[start_frame].append((xpos, ypos))
+    return ordered_details
 
 
-def sample_values(curve_tool, pick, layer):
+def sample_values(curve_tool, pick):
     """Measure values from given point.
 
     Args:
         curve_tool (nuke.Node): Node to measure values.
         pick (tuple): Frame of stroke creation as well as  and y position of
             stroke in screenspace.
-        layer (str): Layer holding hte position data to measure.
 
     Returns:
         Tuple (float, float, float): X, Y and Z Position.
 
     """
     frame, xpos, ypos = pick
+    curve_tool['roi'].setValue(xpos, ypos, xpos+1, ypos+1)
+    nuke.execute(curve_tool, frame, frame)
+    return curve_tool['intensityData'].value()
 
 
 def build_curve_tool(paint_node, channel):
@@ -83,6 +90,7 @@ def build_curve_tool(paint_node, channel):
     curve_tool = nuke.nodes.CurveTool(xpos=paint_node.xpos(),
                                       ypos=paint_node.ypos() + 100,
                                       channels=channel)
+    curve_tool['operation'].setValue(1)
     curve_tool.setInput(0, paint_node)
     return curve_tool
 
@@ -97,15 +105,17 @@ def import_data(node, layer, node_type, uniform_scale):  # pylint: disable=too-m
         uniform_scale: Overall scale to created Nodes.
 
     """
-    coordinates = get_stroke_details(node)
+    frames = get_stroke_details(node)
     temp_xpos = node.xpos()
 
     curve_tool = build_curve_tool(node, layer)
 
-    for pick in coordinates:
+    for stroke in frames:
 
-        nuke.tprint(pick)
-        position = sample_values(node, pick, layer)
+
+        position = sample_values(curve_tool, stroke)
+        print "position"
+        print position
 
         temp_xpos += 150
         temp_ypos = node.ypos() + 100

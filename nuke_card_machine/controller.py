@@ -23,7 +23,6 @@ class Controller:
 
 def start():
     """Start up function."""
-    """
     rotopaint = model.check_nodetype()
     if rotopaint:
 
@@ -33,5 +32,5 @@ def start():
         VIEW.show()
 
         Controller(VIEW)
-    """
+
 
