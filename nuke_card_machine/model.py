@@ -47,16 +47,13 @@ def get_stroke_details(rotonode):
         List: Tuples (int, float, float)
 
     """
-
     strokes = get_strokes(rotonode.knob('curves').rootLayer)
-    details = []
     ordered_details = defaultdict(list)
     for stroke in strokes:
         attributes = stroke.getAttributes()
         start_frame = int(attributes.getValue(0, 'ltn'))
         xpos = stroke.getTransform().getPivotPointAnimCurve(0).constantValue
         ypos = stroke.getTransform().getPivotPointAnimCurve(1).constantValue
-        # details.append((start_frame, xpos, ypos))
         ordered_details[start_frame].append((xpos, ypos))
     return ordered_details
 
@@ -77,22 +74,20 @@ def build_curve_tool(paint_node, channel):
     return curve_tool
 
 
-def sample_values(curve_tool, pick, frame):
+def sample_values(curve_tool, stroke, frame):
     """Measure values from given point.
 
     Args:
+        frame (int): Frame on which color sampling is going to happen.
         curve_tool (nuke.Node): Node to measure values.
-        pick (tuple): Frame of stroke creation as well as  and y position of
+        stroke (tuple): Frame of stroke creation as well as  and y position of
             stroke in screenspace.
 
     Returns:
         Tuple (float, float, float): X, Y and Z Position.
 
     """
-    xpos, ypos = pick
-    print "xpos ypos"
-    print xpos
-    print ypos
+    xpos, ypos = stroke
     curve_tool['ROI'].setValue([xpos, ypos, xpos+1, ypos+1])
     nuke.execute(curve_tool, frame, frame)
     return curve_tool['intensitydata'].value()
@@ -119,8 +114,6 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
         for stroke in frames[frame]:
 
             position = sample_values(curve_tool, stroke, frame)
-            print "sampled position"
-            print position
 
             temp_xpos += 150
             temp_ypos = roto_paint.ypos() + 100
@@ -141,12 +134,11 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
     roto_paint['disable'].setValue(False)
 
 
-
 def check_nodetype():
-    """Validate that selected Node is Rotopaint.
+    """Validate that selected Node is RotoPaint.
 
     Returns:
-        Nuke.node: Selected Rotopaint node if valid.
+        Nuke.node: Selected RotoPaint node if valid.
 
     """
     node = nuke.selectedNode()
