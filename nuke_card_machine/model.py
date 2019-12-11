@@ -59,19 +59,17 @@ def get_stroke_details(rotopaint_node):
     return ordered_details
 
 
-def build_curve_tool(paint_node, channel):
+def build_curve_tool(shuffle):
     """Measure value from sub-channel on given point and layer.
 
     Args:
-        paint_node (nuke.Node): Node to check values on.
-        channel (str): Channel to measure values from.
+        shuffle (nuke.Node): Node to check values on.
 
     """
-    curve_tool = nuke.nodes.CurveTool(xpos=paint_node.xpos(),
-                                      ypos=paint_node.ypos() + 100,
-                                      channels=channel)
+    curve_tool = nuke.nodes.CurveTool(xpos=shuffle.xpos(),
+                                      ypos=shuffle.ypos() + 100)
     curve_tool['operation'].setValue(1)
-    curve_tool.setInput(0, paint_node)
+    curve_tool.setInput(0, shuffle)
     return curve_tool
 
 
@@ -91,7 +89,25 @@ def sample_values(curve_tool, stroke, frame):
     xpos, ypos = stroke
     curve_tool['ROI'].setValue([xpos, ypos, xpos+1, ypos+1])
     nuke.execute(curve_tool, frame, frame)
-    return curve_tool['intensitydata'].value()
+    return curve_tool['intensitydata'].getValue()
+
+
+def build_shuffle_node(roto_paint_node, layer):
+    """Create and set up shuffle node.
+
+    Args:
+        roto_paint_node (nuke.Node): Node to set input to and place in nodegraph.
+        layer (str): Layer to shuffle into RGB.
+
+    Returns:
+        nuke.Node: New created shuffle node.
+
+    """
+    shuffle = nuke.nodes.Shuffle(xpos=roto_paint_node.xpos(),
+                                 ypos=roto_paint_node.ypos() + 100)
+    shuffle.setInput(0, roto_paint_node)
+    shuffle['in'].setValue(layer)
+    return shuffle
 
 
 def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable=too-many-locals
@@ -108,7 +124,8 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
     roto_paint['disable'].setValue(True)
     temp_xpos = roto_paint.xpos()
 
-    curve_tool = build_curve_tool(roto_paint, layer)
+    shuffle = build_shuffle_node(roto_paint, layer)
+    curve_tool = build_curve_tool(shuffle)
 
     for frame in frames:
 
@@ -132,6 +149,7 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
             geometry['translate'].setValue(position[2], 2)
             geometry['uniform_scale'].setValue(float(uniform_scale))
 
+    nuke.delete(shuffle)
     nuke.delete(curve_tool)
     roto_paint['disable'].setValue(False)
 
