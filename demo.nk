@@ -1,0 +1,303 @@
+#! /media/falk/data/Apps/nuke/Nuke12.0v2/libnuke-12.0.2.so -nx
+version 12.0 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="1918" h="1147" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1255" stretch="1"/>
+            <splitter orientation="2">
+                <split size="523"/>
+                <splitter orientation="1">
+                    <split size="1255"/>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"/>
+                    </dock>
+                </splitter>
+                <split size="576"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                    <page id="uk.co.thefoundry.scripteditor.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="de.kombinat-13b.nuke_messenger"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/falk/dev/projects/nuke_card_machine/demo.nk
+ frame 5
+ lock_range true
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ OCIO_config aces_1.1
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Read {
+ inputs 0
+ file_type exr
+ file /home/falk/dev/projects/nuke_card_machine/image_data/env.mantra1.%04d.exr
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ version 1
+ name Read3
+ xpos 866
+ ypos -212
+ postage_stamp false
+}
+set N7c15210 [stack 0]
+FrameHold {
+ first_frame 88
+ name FrameHold1
+ xpos -68
+ ypos -44
+}
+add_layer {world_position world_position.red world_position.green world_position.blue}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints1
+ xpos -68
+ ypos -8
+}
+push $N7c15210
+FrameHold {
+ first_frame 25
+ name FrameHold2
+ xpos 42
+ ypos -44
+}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints2
+ xpos 42
+ ypos -8
+}
+push $N7c15210
+FrameHold {
+ first_frame 50
+ name FrameHold3
+ xpos 152
+ ypos -44
+}
+add_layer {P P.x P.y P.z}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel P
+ N_channel world_position
+ name PositionToPoints3
+ xpos 152
+ ypos -8
+}
+push $N7c15210
+FrameHold {
+ first_frame 100
+ name FrameHold4
+ xpos 262
+ ypos -44
+}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints4
+ xpos 262
+ ypos -8
+}
+Scene {
+ inputs 4
+ name Scene2
+ xpos 142
+ ypos 28
+}
+push $N7c15210
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 2097664}
+    {t x44800000 x44428000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {cubiccurve Brush14 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43f50000 x438e0000 1}}}
+     {t x43f50000 x438e0000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x40a00000 ltm x40a00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush13 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43d58000 x438c0000 1}
+       {x43d70000 x438d0000 1}
+       {x43de0000 x438e0000 1}}}
+     {t x43d8d555 x438d0000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x40a00000 ltm x40a00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush12 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43bd8000 x43808000 1}
+       {x43bd8000 x43810000 1}
+       {x43bf8000 x43820000 1}
+       {x43c10000 x43830000 1}}}
+     {t x43bee000 x4381a000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x40a00000 ltm x40a00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush11 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43ac8000 x43620000 1}
+       {x43ad8000 x43620000 1}}}
+     {t x43ad0000 x43620000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x40a00000 ltm x40a00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush10 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x439c8000 x43820000 1}
+       {x439c8000 x43810000 1}}}
+     {t x439c8000 x43818000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42200000 ltm x42200000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush9 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x439d8000 x43a28000 1}
+       {x439d8000 x439f0000 1}
+       {x439d8000 x439c8000 1}}}
+     {t x439d8000 x439f5555}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42200000 ltm x42200000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush8 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43a18000 x43b50000 1}
+       {x43a18000 x43b40000 1}
+       {x43a08000 x43b38000 1}}}
+     {t x43a12aab x43b42aab}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42200000 ltm x42200000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush7 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43ac8000 x43d00000 1}
+       {x43ab8000 x43cf8000 1}
+       {x43ab0000 x43cd8000 1}
+       {x43ab0000 x43cd0000 1}}}
+     {t x43ab8000 x43ce8000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42200000 ltm x42200000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush6 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x43be8000 x43e80000 1}
+       {x43be8000 x43e70000 1}}}
+     {t x43be8000 x43e78000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42200000 ltm x42200000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush5 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x445f8000 x438f0000 1}}}
+     {t x445f8000 x438f0000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42b00000 ltm x42b00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush4 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x445e4000 x43af0000 1}}}
+     {t x445e4000 x43af0000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42b00000 ltm x42b00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush3 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x44660000 x43d20000 1}
+       {x44660000 x43d10000 1}}}
+     {t x44660000 x43d18000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42b00000 ltm x42b00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush2 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x44688000 x43e70000 1}}}
+     {t x44688000 x43e70000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42b00000 ltm x42b00000 ltt x40000000 tt x41880000}}
+    {cubiccurve Brush1 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x446c0000 x43f44000 1}}}
+     {t x446c0000 x43f44000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44800000 spy x44428000 sb 1 ltn x42b00000 ltm x42b00000 ltt x40000000 tt x41880000}}}}}}
+ toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 ltn 5 ltm 5 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_lifetime_type single
+ toolbar_lifetime_start 88
+ toolbar_lifetime_end 88
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {1024 778}
+ colorOverlay {0 0 0 0}
+ lifetime_start 5
+ lifetime_end 5
+ motionblur_on true
+ brush_spacing 0.05000000075
+ brush_hardness 0.200000003
+ source_black_outside true
+ name RotoPaint1
+ selected true
+ xpos 866
+ ypos -97
+}
+Viewer {
+ frame 5
+ frame_range 1-100
+ colour_sample_bbox {0.474999994 0.198437497 0.4765625 0.200000003}
+ name Viewer1
+ xpos -63
+ ypos 144
+}

@@ -114,8 +114,7 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
 
         for stroke in frames[frame]:
 
-            position = sample_values(curve_tool, stroke, frame)
-
+            position = sample_values(curve_tool, stroke, int(frame))
             temp_xpos += 150
             temp_ypos = roto_paint.ypos() + 100
 
@@ -128,7 +127,9 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
                 geometry = nuke.nodes.TransformGeo(xpos=temp_xpos, ypos=temp_ypos + 100)
                 geometry.setInput(0, card)
 
-            geometry['translate'].setValue(position[:3])
+            geometry['translate'].setValue(position[2], 0)
+            geometry['translate'].setValue(position[1], 1)
+            geometry['translate'].setValue(position[0], 2)
             geometry['uniform_scale'].setValue(float(uniform_scale))
 
     nuke.delete(curve_tool)
