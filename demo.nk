@@ -1,0 +1,160 @@
+#! /media/falk/data/Apps/nuke/Nuke12.0v2/libnuke-12.0.2.so -nx
+version 12.0 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="1918" h="1147" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1255" stretch="1"/>
+            <splitter orientation="2">
+                <split size="523"/>
+                <splitter orientation="1">
+                    <split size="1255"/>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"/>
+                    </dock>
+                </splitter>
+                <split size="576"/>
+                <dock id="" activePageId="DAG.1">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                    <page id="uk.co.thefoundry.scripteditor.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="de.kombinat-13b.nuke_messenger"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/falk/dev/projects/nuke_card_machine/demo.nk
+ frame 29
+ lock_range true
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ OCIO_config aces_1.1
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Read {
+ inputs 0
+ file_type exr
+ file /home/falk/dev/projects/nuke_card_machine/image_data/env.mantra1.%04d.exr
+ format "1280 720 0 0 1280 720 1 HD_720"
+ last 100
+ origlast 100
+ origset true
+ version 6
+ name Read3
+ xpos 152
+ ypos -194
+ postage_stamp false
+}
+add_layer {world_position world_position.red world_position.green world_position.blue}
+Shuffle {
+ in world_position
+ red blue
+ blue red
+ out world_position
+ name Shuffle1
+ xpos 152
+ ypos -158
+}
+set N67e3340 [stack 0]
+PostageStamp {
+ name PostageStamp1
+ selected true
+ xpos 884
+ ypos -212
+ postage_stamp true
+}
+push $N67e3340
+FrameHold {
+ first_frame 88
+ name FrameHold1
+ xpos -68
+ ypos -44
+}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints1
+ xpos -68
+ ypos -8
+}
+push $N67e3340
+FrameHold {
+ first_frame 25
+ name FrameHold2
+ xpos 42
+ ypos -44
+}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints2
+ xpos 42
+ ypos -8
+}
+push $N67e3340
+FrameHold {
+ first_frame 50
+ name FrameHold3
+ xpos 152
+ ypos -44
+}
+add_layer {P P.x P.y P.z}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel P
+ N_channel world_position
+ name PositionToPoints3
+ xpos 152
+ ypos -8
+}
+push $N67e3340
+FrameHold {
+ first_frame 100
+ name FrameHold4
+ xpos 262
+ ypos -44
+}
+PositionToPoints2 {
+ display textured
+ render_mode textured
+ P_channel world_position
+ name PositionToPoints4
+ xpos 262
+ ypos -8
+}
+Scene {
+ inputs 4
+ name Scene2
+ xpos 162
+ ypos 16
+}
+Viewer {
+ frame_range 1-100
+ channels rgb
+ name Viewer1
+ xpos 984
+ ypos 31
+}
