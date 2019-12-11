@@ -18,7 +18,7 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
                     </dock>
                 </splitter>
                 <split size="576"/>
-                <dock id="" activePageId="DAG.1">
+                <dock id="" activePageId="DAG.1" focus="true">
                     <page id="DAG.1"/>
                     <page id="Curve Editor.1"/>
                     <page id="DopeSheet.1"/>
@@ -28,7 +28,6 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
             <split size="615"/>
             <dock id="" activePageId="Properties.1">
                 <page id="Properties.1"/>
-                <page id="de.kombinat-13b.nuke_messenger"/>
             </dock>
         </splitter>
     </window>
@@ -37,7 +36,7 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 Root {
  inputs 0
  name /home/falk/dev/projects/nuke_card_machine/demo.nk
- frame 29
+ frame 76
  lock_range true
  format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
  proxy_type scale
@@ -51,6 +50,22 @@ Root {
  logLut Cineon
  floatLut linear
 }
+add_layer {world_position world_position.red world_position.green world_position.blue}
+Shuffle {
+ inputs 0
+ in world_position
+ out world_position
+ name Shuffle1
+ xpos 232
+ ypos -158
+}
+Axis {
+ inputs 0
+ translate {-287.25 219.125 219.125}
+ name Axis1
+ xpos 857
+ ypos 335
+}
 Read {
  inputs 0
  file_type exr
@@ -59,31 +74,101 @@ Read {
  last 100
  origlast 100
  origset true
- version 6
+ version 7
  name Read3
  xpos 152
  ypos -194
  postage_stamp false
 }
-add_layer {world_position world_position.red world_position.green world_position.blue}
-Shuffle {
- in world_position
- red blue
- blue red
- out world_position
- name Shuffle1
- xpos 152
- ypos -158
-}
-set N67e3340 [stack 0]
+set N598fab0 [stack 0]
 PostageStamp {
  name PostageStamp1
- selected true
- xpos 884
+ xpos 881
  ypos -212
  postage_stamp true
 }
-push $N67e3340
+set N6c9bde0 [stack 0]
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 2097664}
+    {t x44200000 x43b40000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {cubiccurve Brush17 512 catmullrom
+     {cc
+      {f 2080}
+      {p
+       {x44618000 x43e90000 x3eed4000}
+       {x4461c000 x43e90000 x3f0ec000}
+       {x44620000 x43ea0000 x3f14e000}
+       {x44620000 x43ea8000 x3f1de000}
+       {x44624000 x43eb8000 x3ac00000}}}
+     {t x4461e666 x43ea0000}
+     {a ro 0 go 0 bo 0 ao 0 bu 1 str 1 spx x44200000 spy x43b40000 sb 1 ltn x42980000 ltm x42980000 ltt x40000000 tt x41880000}}}}}}
+ toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 ltn 76 ltm 76 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_lifetime_type single
+ toolbar_lifetime_start 76
+ toolbar_lifetime_end 76
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {1024 778}
+ colorOverlay {0 0 0 0}
+ lifetime_start 76
+ lifetime_end 76
+ brush_spacing 0.05000000075
+ brush_hardness 0.200000003
+ source_black_outside true
+ name RotoPaint1
+ xpos 881
+ ypos -56
+}
+Shuffle {
+ in world_position
+ name Shuffle3
+ xpos 881
+ ypos 44
+}
+CurveTool {
+ ROI {903.5999756 468 904.5999756 469}
+ intensitydata {{curve x76 69.25} {curve x76 219.125} {curve x76 -287.25} {curve x76 69.25}}
+ name CurveTool1
+ xpos 881
+ ypos 144
+}
+Axis {
+ inputs 0
+ translate {69.25 219.125 -287.25}
+ name Axis2
+ xpos 1031
+ ypos 94
+}
+push $N6c9bde0
+Shuffle {
+ in world_position
+ name Shuffle2
+ xpos 1048
+ ypos -188
+}
+push $N598fab0
 FrameHold {
  first_frame 88
  name FrameHold1
@@ -98,7 +183,7 @@ PositionToPoints2 {
  xpos -68
  ypos -8
 }
-push $N67e3340
+push $N598fab0
 FrameHold {
  first_frame 25
  name FrameHold2
@@ -113,7 +198,7 @@ PositionToPoints2 {
  xpos 42
  ypos -8
 }
-push $N67e3340
+push $N598fab0
 FrameHold {
  first_frame 50
  name FrameHold3
@@ -130,7 +215,7 @@ PositionToPoints2 {
  xpos 152
  ypos -8
 }
-push $N67e3340
+push $N598fab0
 FrameHold {
  first_frame 100
  name FrameHold4
@@ -152,9 +237,11 @@ Scene {
  ypos 16
 }
 Viewer {
+ inputs 2
  frame_range 1-100
  channels rgb
+ colour_sample_bbox {0.412499994 0.168750003 0.4140625 0.170312494}
  name Viewer1
- xpos 984
- ypos 31
+ xpos 152
+ ypos 82
 }
