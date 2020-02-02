@@ -1,8 +1,5 @@
 """Interface class to provide ability for cards creation."""
 
-# Import built-in modules
-import os
-
 # Import third-party modules
 from PySide2 import QtWidgets, QtCore
 
@@ -19,17 +16,8 @@ class Button(QtWidgets.QPushButton):
         self.setText(name)
         self.setMinimumWidth(100)
         self.setMaximumWidth(100)
-        self.set_style_sheet(self)
-
-    @staticmethod
-    def set_style_sheet(widget):
-        """Set Stylesheet to the user interface."""
-        styles_file = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                                    "stylesheet.css"))
-
-        with open(styles_file, "r") as file_:
-            style = file_.read()
-            widget.setStyleSheet(style)
+        self.setStyleSheet("QPushButton:hover {"
+                           " background-color: #C26828;}")
 
 
 class DropDown(QtWidgets.QWidget):
@@ -70,7 +58,6 @@ class CardMachine(QtWidgets.QWidget):
 
         self.node = node
         self.layer = layer
-        print self.layer
 
         self.build_widgets()
         self.build_layouts()
@@ -78,6 +65,7 @@ class CardMachine(QtWidgets.QWidget):
         self.set_up_signals()
 
     def build_widgets(self):
+        """Create and set up widgets."""
         self.channel_drop = DropDown('Position Pass', self.layer)
         self.geometry_drop = DropDown('Geometry', sorted(GEOMETRY.keys()))
         self.scale = DropDown('Uniform Scale', content=None, scale=True)
@@ -86,6 +74,7 @@ class CardMachine(QtWidgets.QWidget):
         self.ok_button = Button('Create Geometry')
 
     def build_layouts(self):
+        """Create layouts and add item to those."""
         main_layout = QtWidgets.QVBoxLayout()
         button_layout = QtWidgets.QHBoxLayout()
         button_layout.setAlignment(QtCore.Qt.AlignRight)
@@ -100,11 +89,13 @@ class CardMachine(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
     def set_up_window_properties(self):
+        """Set up properties like size and title."""
         self.setWindowTitle('nuke_card_machine')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.setFixedSize(300, 300)
 
     def set_up_signals(self):
+        """Set up signals."""
         self.cancel_button.clicked.connect(self.close)
         self.ok_button.clicked.connect(self.create_geometry)
 

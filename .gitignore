@@ -1,17 +1,11 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
 *.py[cod]
 
-
-# Environments
-.env
-.venv
-env/
+# Environment
 venv/
-ENV/
 
 # pycharm
 .idea/
 
 # folder
-data/
+image_data/

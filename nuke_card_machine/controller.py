@@ -4,9 +4,6 @@
 from nuke_card_machine import view
 from nuke_card_machine import model
 
-reload(view)
-reload(model)
-
 
 class Controller(object):
     """Connect the user interface with model."""
@@ -34,9 +31,7 @@ def start():
     """Start up function."""
     rotopaint = model.check_nodetype()
     if rotopaint:
-
         global VIEW  # pylint: disable=global-statement, global-variable-undefined
-        print model.get_layer(rotopaint)
         VIEW = view.CardMachine(rotopaint, model.get_layer(rotopaint))
         VIEW.raise_()
         VIEW.show()

@@ -6,6 +6,9 @@ from collections import defaultdict
 # Import third-party modules
 import nuke  # pylint: disable=import-error
 
+# Import local modules
+from nuke_card_machine.constants import GEOMETRY
+
 
 def get_layer(node):
     """Get available layer at selected node.
@@ -117,7 +120,7 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
         roto_paint (nuke.node): Nuke Rotopaint node.
         layer (str): Name of layer holding position information.
         node_type (str): Type of nuke geometry to create.
-        uniform_scale: Overall scale to created Nodes.
+        uniform_scale (float): Overall scale to created Nodes.
 
     """
     frames = get_stroke_details(roto_paint)
@@ -135,8 +138,7 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
             temp_xpos += 150
             temp_ypos = roto_paint.ypos() + 100
 
-            geometry = nuke.createNode(node_type)
-            geometry.setXYpos(temp_xpos, temp_ypos + 50)
+            geometry = GEOMETRY[node_type](xpos=temp_xpos, ypos=temp_ypos + 50)
             geometry.setInput(0, None)
 
             if node_type == 'Card':
@@ -154,7 +156,7 @@ def import_data(roto_paint, layer, node_type, uniform_scale):  # pylint: disable
     roto_paint['disable'].setValue(False)
 
 
-def check_nodetype():
+def check_nodetype():  # pylint: disable=inconsistent-return-statements
     """Validate that selected Node is RotoPaint.
 
     Returns:
@@ -166,7 +168,6 @@ def check_nodetype():
         return node
     else:
         error_message()
-        return
 
 
 def error_message():
